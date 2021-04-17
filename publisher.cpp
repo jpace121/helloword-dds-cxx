@@ -1,7 +1,6 @@
 #include "dds/dds.hpp"
 #include "HelloWorld.hpp"
-#include <thread>
-#include <chrono>
+#include <iostream>
 
 int main(int argc, char *argv[])
 {
@@ -17,6 +16,7 @@ int main(int argc, char *argv[])
     statusCondition.enabled_statuses(dds::core::status::StatusMask::publication_matched());
     statusCondition.handler([&writer](const dds::core::cond::StatusCondition&)
                             {
+                                writer.publication_matched_status(); // Not sure this is really neccessary.
                                 HelloWorld::Msg msg("Hello");
                                 writer.write(msg);
                             });
@@ -29,4 +29,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
