@@ -13,13 +13,19 @@ int main(int argc, char *argv[])
 
     dds::pub::DataWriter<HelloWorld::Msg> writer(publisher, topic);
 
-    HelloWorld::Msg msg("Hello");
+    dds::core::cond::StatusCondition statusCondition(writer);
+    statusCondition.enabled_statuses(dds::core::status::StatusMask::publication_matched());
+    statusCondition.handler([&writer](const dds::core::cond::StatusCondition&)
+                            {
+                                HelloWorld::Msg msg("Hello");
+                                writer.write(msg);
+                            });
 
-    while (writer.publication_matched_status().current_count() == 0)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-    writer.write(msg);
+    dds::core::cond::WaitSet waitSet;
+    waitSet.attach_condition(statusCondition);
+
+    waitSet.dispatch();
+
 
     return 0;
 }
