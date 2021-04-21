@@ -8,7 +8,10 @@ int main(int argc, char *argv[])
 
     dds::topic::Topic<HelloWorld::Msg> topic(participant, "HelloWorld");
 
-    dds::pub::Publisher publisher(participant);
+    dds::pub::qos::PublisherQos pubQos = participant.default_publisher_qos()
+                                        << dds::core::policy::Partition("jpace121");
+    dds::pub::Publisher publisher(participant, pubQos);
+
 
     dds::pub::DataWriter<HelloWorld::Msg> writer(publisher, topic);
 

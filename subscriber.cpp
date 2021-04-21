@@ -58,7 +58,9 @@ int main(int argc, char *argv[])
     dds::domain::DomainParticipant participant(org::eclipse::cyclonedds::domain::default_id());
 
     dds::topic::Topic<HelloWorld::Msg> topic(participant, "HelloWorld");
-    dds::sub::Subscriber subscriber(participant);
+    dds::sub::qos::SubscriberQos subQos = participant.default_subscriber_qos()
+                                        << dds::core::policy::Partition("jpace121");
+    dds::sub::Subscriber subscriber(participant, subQos);
     dds::sub::DataReader<HelloWorld::Msg> reader(subscriber, topic);
 
     reader.listener(new Subscriber, dds::core::status::StatusMask::data_available());
