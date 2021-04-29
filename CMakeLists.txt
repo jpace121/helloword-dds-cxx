@@ -7,8 +7,8 @@ idlcxx_generate(TARGET HelloWorld_lib FILES "HelloWorld.idl")
 
 add_executable(pub publisher.cpp)
 target_link_libraries(pub CycloneDDS-CXX::ddscxx HelloWorld_lib)
-set_property(TARGET pub PROPERTY CXX_STANDARD 11)
+set_property(TARGET pub PROPERTY CXX_STANDARD 17)
 
 add_executable(sub subscriber.cpp)
 target_link_libraries(sub CycloneDDS-CXX::ddscxx HelloWorld_lib)
-set_property(TARGET sub PROPERTY CXX_STANDARD 11)
+set_property(TARGET sub PROPERTY CXX_STANDARD 17)

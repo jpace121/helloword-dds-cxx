@@ -61,7 +61,9 @@ int main(int argc, char *argv[])
     dds::sub::qos::SubscriberQos subQos = participant.default_subscriber_qos()
                                         << dds::core::policy::Partition("jpace121");
     dds::sub::Subscriber subscriber(participant, subQos);
-    dds::sub::DataReader<HelloWorld::Msg> reader(subscriber, topic);
+    dds::sub::qos::DataReaderQos readerQos = subscriber.default_datareader_qos()
+        << dds::core::policy::Reliability::Reliable(dds::core::Duration::from_secs(1));
+    dds::sub::DataReader<HelloWorld::Msg> reader(subscriber, topic, readerQos);
 
     reader.listener(new Subscriber, dds::core::status::StatusMask::data_available());
 

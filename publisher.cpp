@@ -13,13 +13,14 @@ int main(int argc, char *argv[])
     dds::pub::Publisher publisher(participant, pubQos);
 
 
-    dds::pub::DataWriter<HelloWorld::Msg> writer(publisher, topic);
+    dds::pub::qos::DataWriterQos writerQos = publisher.default_datawriter_qos()
+        << dds::core::policy::Reliability::Reliable(dds::core::Duration::from_secs(0.5));
+    dds::pub::DataWriter<HelloWorld::Msg> writer(publisher, topic, writerQos);
 
     dds::core::cond::StatusCondition statusCondition(writer);
     statusCondition.enabled_statuses(dds::core::status::StatusMask::publication_matched());
     statusCondition.handler([&writer](const dds::core::cond::StatusCondition&)
                             {
-                                writer.publication_matched_status(); // Not sure this is really neccessary.
                                 HelloWorld::Msg msg("Hello");
                                 writer.write(msg);
                             });
@@ -28,7 +29,6 @@ int main(int argc, char *argv[])
     waitSet.attach_condition(statusCondition);
 
     waitSet.dispatch();
-
 
     return 0;
 }
